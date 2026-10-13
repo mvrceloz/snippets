@@ -1,0 +1,3 @@
+# Give the logged-in seat user read access to keyboards so `snip daemon` can
+# detect a double Shift tap. Must sort before 73-seat-late.rules (uaccess).
+SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_KEYBOARD}=="1", TAG+="uaccess"

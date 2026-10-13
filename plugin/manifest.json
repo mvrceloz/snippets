@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "mvrcelo.snippets",
+  "name": "Snippets",
+  "version": "0.1.0",
+  "author": "mvrcelo",
+  "license": "MIT",
+  "description": "Text snippets captured with double Shift, stored as Markdown files.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Snippets",
+    "description": "Browse, search, edit and add saved text snippets.",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "snipBinary": ""
+    },
+    "schema": [
+      {
+        "key": "snipBinary",
+        "type": "string",
+        "label": "Path to the snip binary (empty: ~/.local/bin/snip)"
+      }
+    ]
+  }
+}
