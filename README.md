@@ -20,7 +20,7 @@ Files you drop in by hand, with or without front matter, show up too.
 
 | Path | What |
 |---|---|
-| `daemon/` | `snip`, a Rust binary (~640 KB). `snip daemon` watches keyboards over evdev for a double Shift tap, then reads the Wayland primary selection (`wl-paste --primary`), so your clipboard is left alone. `list` / `save` / `delete` are the only code that touches the files. |
+| `daemon/` | `snip`, a Rust binary (~770 KB). `snip daemon` watches keyboards over evdev for a double Shift tap, then reads the primary selection (what's highlighted), so your clipboard is left alone. It reads the Wayland primary (`wl-paste --primary`) for native apps and the X11 PRIMARY for XWayland apps such as VS Code with `--ozone-platform=x11`, picked by asking Hyprland which window is focused. `list` / `save` / `delete` are the only code that touches the files. |
 | `plugin/` | omarchy-shell bar widget (QML): a 448px popup with search, list, and an inline editor. All I/O goes through `snip`. |
 | `dist/snip.service` | systemd user unit, started with the graphical session. |
 | `dist/70-snippets-keyboard.rules` | udev rule giving the active seat user read access to keyboards. It's narrower than the `input` group and needs no relogin. |
@@ -54,5 +54,6 @@ bind = SUPER SHIFT, N, exec, omarchy-shell snippets create
 
 ## Troubleshooting
 
-- `journalctl --user -u snip -f` shows which keyboards the daemon is watching.
+- `journalctl --user -u snip -f` shows which keyboards the daemon is watching, and logs every
+  capture with its source (`wayland` or `x11`).
 - "Nothing selected": the app didn't set a primary selection. Most Wayland apps do on highlight.

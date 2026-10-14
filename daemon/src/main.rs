@@ -1,4 +1,5 @@
 mod hotkey;
+mod selection;
 mod store;
 
 use serde::Deserialize;
@@ -76,25 +77,25 @@ fn save() -> io::Result<()> {
     Ok(())
 }
 
-/// Read the Wayland primary selection (whatever is highlighted) without
-/// touching the clipboard.
+/// Read the primary selection (whatever is highlighted) without touching
+/// the clipboard.
 fn capture() -> io::Result<()> {
-    let out = Command::new("wl-paste")
-        .args(["--primary", "--no-newline", "--type", "text"])
-        .output()?;
-    let text = String::from_utf8_lossy(&out.stdout).into_owned();
+    let (text, source) = selection::read();
 
-    if !out.status.success() || text.trim().is_empty() {
+    if text.trim().is_empty() {
+        eprintln!("snip: capture: nothing selected ({source})");
         notify("Nothing selected", "Highlight some text, then tap Shift twice.");
         return Ok(());
     }
 
     if store::list()?.first().is_some_and(|newest| newest.body == text) {
+        eprintln!("snip: capture: already saved ({source}, {} chars)", text.chars().count());
         notify("Already saved", &preview(&text));
         return Ok(());
     }
 
-    store::save(None, "", &text)?;
+    let id = store::save(None, "", &text)?;
+    eprintln!("snip: capture: saved {id} ({source}, {} chars)", text.chars().count());
     notify("Snippet saved", &preview(&text));
     Ok(())
 }
